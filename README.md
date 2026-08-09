@@ -1,1 +1,1 @@
-# slq_training
+# sql_training
