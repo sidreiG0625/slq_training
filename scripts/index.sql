@@ -19,9 +19,76 @@ CREATE NONCLUSTERED INDEX idx_dbCustomers_nc ON Sales.dbCustomers(LastName)     
 -- COMPOSITE INDEX --> a non-clustered index applied to multiple columns
 CREATE INDEX idx_dbCustomers_CountryScore ON Sales.dbCustomers(Country, Score)   -- non-clustered index applied to Country and Score columns
 
--- Creating a Columnstore Index 
+-- COLUMNSTORE INDEX
 
 CREATE CLUSTERED COLUMNSTORE INDEX idx_dbCustomers_cs ON Sales.Customers         -- clustered columnstore index
-CREATE NONCLUSTERED COLUMNSTORE INDEX idx_dbCustomers_cs_FirstName                -- nonclustered columnstore index
+CREATE NONCLUSTERED COLUMNSTORE INDEX idx_dbCustomers_cs_FirstName               -- nonclustered columnstore index
 ON Sales.Customers(FirstName)
- 
+
+-- =======================================================================================
+-- UNIQUE INDEX
+  
+-- SYNTAX: 
+-- CREATE UNIQUE <CLUSTERED | NONCLUSTERED> <COLUMNSTORE> INDEX index_name ON
+-- table_name (col1, col2, ....)
+-- ========================================================================================
+
+CREATE UNIQUE NONCLUSTERED COLUMNSTORE INDEX idx_dbProducts_uc_Products ON Sales.Products(Products)
+
+-- =======================================================================================
+-- FILTERED INDEX 
+-- BENEFITS: 1. Targeted optimization, 
+
+-- SYNTAX: 
+-- CREATE UNIQUE <CLUSTERED | NONCLUSTERED> <COLUMNSTORE> INDEX index_name ON
+-- table_name (col1, col2, ....) WHERE condition1
+-- ========================================================================================
+CREATE UNIQUE NONCLUSTERED COLUMNSTORE INDEX idx_dbOrders_ufc_Country ON Sales.Orders(Country)
+WHERE Country = 'USA'
+-- =======================================================================================
+-- WHEN AND WHAT TO INDEX TO USE
+-- HEAP INDEX - used when writing queries
+-- CLUSTERED INDEX - used for primary keys. If not, then date columns
+-- NONCLUSTERED INDEX - for non-PK columns (foreign keys, joins and filters)
+-- COLUMNSTORE INDEX - for analytical queries like datawarehouse, reporting systems that reduce size of large tables 
+-- FILTERED INDEX - to target subset of data, reduce the size of index
+-- UNIQUE INDEX - enforce uniqueness and improve speed of the query. Restricts duplicate inserts of the target index
+-- ========================================================================================
+
+-- ========================================================================================
+                      -- INDEX MANAGEMENT --
+-- Monitor Index usage. Drop unused indexes
+-- Monitor Missing Indexes
+-- Monitor duplicate indexes
+-- Update statistics
+-- Monitor fragmentation
+   -- Reorganize: 
+      -- Defragment leaf nodes to keep them sorted
+      -- Light operation 
+   -- Rebuild
+      -- drops the whole index and recreates the whole indexes. Heavy operation
+-- ========================================================================================
+-- List all indexes on a specific table
+sp_helpindex Sales.DBCustomers
+
+-- Monitor index usage
+SELECT 
+  tbl.name as TableName,
+  Name as IndexName,
+  type desc as IndexType,
+  is_primary_key as PrimaryKey,
+  is_uniques as IsUnique,
+  is_disabled as IsDisabled
+FROM sys.indexes idx
+JOIN sys.tables tbl
+ON idx.object_id = tbl.object_id
+ORDER BY tbl.name, idx.name
+
+-- ========================================================================================
+                      -- EXECUTION PLAN --
+-- Estimated vs Actual Execution Plans
+   -- if the predictions dont match the Actual Execution Plan, this indicate issues like inaccurate
+   -- statistics or outdated indexes leading to poor performance
+-- ========================================================================================
+
+
