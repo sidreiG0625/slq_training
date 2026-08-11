@@ -1,0 +1,53 @@
+-- ========================================================================================
+                      -- PERFORMANCE OPTIMIZATION METHODS --
+                          -- 1. INDEX MANAGEMENT
+                          -- 2. PARTITIONS
+                          -- 
+
+-- METHOD 1. INDEX MANAGEMENT --
+-- Monitor Index usage. Drop unused indexes
+-- Monitor Missing Indexes
+-- Monitor duplicate indexes
+-- Update statistics
+-- Monitor fragmentation
+   -- Reorganize: 
+      -- Defragment leaf nodes to keep them sorted
+      -- Light operation 
+   -- Rebuild
+      -- drops the whole index and recreates the whole indexes. Heavy operation
+-- ========================================================================================
+                      -- INDEX EXECUTION PLAN --
+-- Estimated vs Actual Execution Plans
+   -- if the predictions dont match the Actual Execution Plan, this indicate issues like inaccurate
+   -- statistics or outdated indexes leading to poor performance
+-- ========================================================================================
+                      -- INDEXING STRATEGY --
+-- GOLDEN RULE: Avoid overindexing (Less is more!!!) --> 
+                -- indexes slows down write performance
+                -- Over indexing confuses execution plans --> increasing execution plan time 
+-- INDEXING STRATEGY
+-- STEP 1: Initiate initial strategy 
+     -- OLAP --> Optimize Read Performance (switch large frequently uses tables into a columnstore index)
+     -- OLTP --> Optimize Write performance (use clustered column primary keys index)
+-- STEP 2: USAGE PATTERNS Indexing
+    --  Identify frequently used tables and columns
+    -- Choose the right index
+    -- Test Index
+-- STEP 3: Scenario based indexing
+    -- Identify slow queries
+    -- Check execution plan
+    -- Choose the right index
+    -- Test and Compare execution plans
+-- STEP 4: Monitoring and Maintenance
+    -- Monitor index usage
+    -- MOnitor mssing indexes
+    -- MOnitor duplicate indexes
+    -- Update statistics
+    -- Monitor fragmentations
+-- ========================================================================================
+
+
+                      -- PERFORMANCE OPTIMIZATION METHODS --
+-- METHOD 1. SQL PARTITIONS 
+-- divides big table into smaller partitions
+-- ========================================================================================
