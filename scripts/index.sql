@@ -47,10 +47,12 @@ CREATE UNIQUE NONCLUSTERED COLUMNSTORE INDEX idx_dbOrders_ufc_Country ON Sales.O
 WHERE Country = 'USA'
 -- =======================================================================================
 -- WHEN AND WHAT TO INDEX TO USE
--- HEAP INDEX - used when writing queries
--- CLUSTERED INDEX - used for primary keys. If not, then date columns
+-- HEAP INDEX - used when writing queries. Fast inserts queries.
+-- CLUSTERED INDEX - used for primary keys. If not, then date columns. Applicable for OLTP Systems (Online Transactions Processing)
 -- NONCLUSTERED INDEX - for non-PK columns (foreign keys, joins and filters)
--- COLUMNSTORE INDEX - for analytical queries like datawarehouse, reporting systems that reduce size of large tables 
+-- COLUMNSTORE INDEX 
+  -- for analytical queries like datawarehouse, reporting systems that reduce size of large tables. 
+  -- Applicable for OLAP Systems (Online Analytical Processing)
 -- FILTERED INDEX - to target subset of data, reduce the size of index
 -- UNIQUE INDEX - enforce uniqueness and improve speed of the query. Restricts duplicate inserts of the target index
 -- ========================================================================================
@@ -89,6 +91,32 @@ ORDER BY tbl.name, idx.name
 -- Estimated vs Actual Execution Plans
    -- if the predictions dont match the Actual Execution Plan, this indicate issues like inaccurate
    -- statistics or outdated indexes leading to poor performance
+-- ========================================================================================
+
+-- ========================================================================================
+                      -- INDEXING STRATEGY --
+-- GOLDEN RULE: Avoid overindexing (Less is more!!!) --> 
+                -- indexes slows down write performance
+                -- Over indexing confuses execution plans --> increasing execution plan time 
+-- INDEXING STRATEGY
+-- STEP 1: Initiate initial strategy 
+     -- OLAP --> Optimize Read Performance (switch large frequently uses tables into a columnstore index)
+     -- OLTP --> Optimize Write performance (use clustered column primary keys index)
+-- STEP 2: USAGE PATTERNS Indexing
+    --  Identify frequently used tables and columns
+    -- Choose the right index
+    -- Test Index
+-- STEP 3: Scenario based indexing
+    -- Identify slow queries
+    -- Check execution plan
+    -- Choose the right index
+    -- Test and Compare execution plans
+-- STEP 4: Monitoring and Maintenance
+    -- Monitor index usage
+    -- MOnitor mssing indexes
+    -- MOnitor duplicate indexes
+    -- Update statistics
+    -- Monitor fragmentations
 -- ========================================================================================
 
 
