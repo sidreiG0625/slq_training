@@ -50,6 +50,11 @@
                                  -- reorganize or rebuild indexes
                                  -- partition largem fact tables to improve performance
 
+                              -- OVERALL TIPS *
+                                -- Focus on writing clear queries
+                                -- Optimize performance only when necessary
+                                -- Always test using execution plan
+
 -- METHOD 1. INDEX MANAGEMENT --
 -- Monitor Index usage. Drop unused indexes
 -- Monitor Missing Indexes
